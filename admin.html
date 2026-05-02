@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inkbound - Admin Book Upload</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #fdf8f2;
+      --card: #fffbf5;
+      --text: #2e241b;
+      --text-light: #5c4a3a;
+      --accent: #5e3e2c;
+      --accent-hover: #4a2f1f;
+      --border: #e4d5c3;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --success: #27ae60;
+      --danger: #c0392b;
+    }
+
+    body.dark-mode {
+      --bg: #1a1a2e;
+      --card: #252540;
+      --text: #e0d6c8;
+      --text-light: #c4b8a8;
+      --accent: #c4956a;
+      --border: #3a3a55;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .navbar {
+      background: var(--card);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1e3b4a;
+      text-decoration: none;
+    }
+
+    body.dark-mode .logo { color: #c4956a; }
+
+    .btn {
+      padding: 0.6rem 1.4rem;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #4a2f1f; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--accent); color: var(--accent); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-small { padding: 0.35rem 0.9rem; font-size: 0.8rem; }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .upload-section, .book-list {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      font-family: Georgia, serif;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .form-group { margin-bottom: 1rem; }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.7rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .form-group textarea { min-height: 70px; resize: vertical; }
+
+    .file-area {
+      border: 3px dashed var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      background: var(--bg);
+      transition: 0.2s;
+    }
+
+    .file-area:hover { border-color: var(--accent); }
+
+    .file-selected {
+      background: #d4edda;
+      border: 2px solid #27ae60;
+      padding: 0.8rem;
+      border-radius: 10px;
+      display: none;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .file-selected.show { display: flex; }
+    body.dark-mode .file-selected { background: #1a3a2a; border-color: #6fcf97; }
+
+    .file-selected .info { flex: 1; }
+    .file-selected .name { font-weight: 600; font-size: 0.9rem; }
+    .file-selected .size { font-size: 0.8rem; color: #666; }
+
+    .message {
+      padding: 0.8rem;
+      border-radius: 10px;
+      margin: 0.8rem 0;
+      display: none;
+      font-weight: 500;
+    }
+
+    .message.success { background: #d4edda; color: #155724; display: block; }
+    .message.error { background: #f8d7da; color: #721c24; display: block; }
+    .message.info { background: #d1ecf1; color: #0c5460; display: block; }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #ddd;
+      border-radius: 3px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar.show { display: block; }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .book-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .book-item:last-child { border-bottom: none; }
+
+    .book-item .item-info { flex: 1; min-width: 150px; }
+    .book-item .item-info strong { display: block; }
+    .book-item .item-info small { color: var(--text-light); }
+    .book-item .item-info .has-file { color: var(--success); font-weight: 600; font-size: 0.8rem; }
+
+    .storage-info {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1e3b4a;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 30px;
+      z-index: 2000;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <script>
+  const adminPassword = "mypassword123"; // CHANGE THIS!
+  const entered = prompt("Admin password:");
+  if (entered !== adminPassword) {
+    document.body.innerHTML = "<h1 style='text-align:center; margin-top:100px;'>🔒 Access Denied</h1>";
+    throw new Error("Access denied");
+  }
+</script>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo">📚 Inkbound Admin</a>
+    <button class="btn btn-outline" onclick="window.location.href='index.html'">← Back to Website</button>
+  </nav>
+
+  <div class="container">
+    <h1 style="margin-bottom:1.5rem;">📤 Upload Books (IndexedDB Storage)</h1>
+    <p class="storage-info">📦 Storage: <span id="storageUsed">Calculating...</span></p>
+
+    <div id="messageBox" class="message"></div>
+
+    <!-- UPLOAD FORM -->
+    <div class="upload-section">
+      <h2>Add New Book</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Book Title *</label>
+          <input type="text" id="bookTitle" placeholder="Title">
+        </div>
+        <div class="form-group">
+          <label>Author *</label>
+          <input type="text" id="bookAuthor" placeholder="Author">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Genre</label>
+          <select id="bookGenre">
+            <option value="fiction">Fiction</option>
+            <option value="education">Education</option>
+            <option value="history">History</option>
+            <option value="science">Science</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="biography">Biography</option>
+            <option value="mystery">Mystery</option>
+            <option value="romance">Romance</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Language</label>
+          <input type="text" id="bookLanguage" value="English">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Pages</label>
+          <input type="number" id="bookPages" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label>Year</label>
+          <input type="number" id="bookYear" placeholder="2024" min="1000" max="2099">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="bookDescription" placeholder="Short description..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Cover Image (optional)</label>
+        <input type="file" id="coverInput" accept="image/*" style="padding:0.5rem;">
+        <small style="color:var(--text-light);">Cover is stored separately (small size)</small>
+      </div>
+
+      <div class="form-group">
+        <label>Book File (PDF, EPUB, TXT) *</label>
+        <div class="file-area" onclick="document.getElementById('fileInput').click()">
+          <i class="fas fa-cloud-upload-alt" style="font-size:1.8rem; color:var(--accent);"></i>
+          <p><strong>Click to select file</strong></p>
+          <small>PDF, EPUB, TXT • Any size (stored in IndexedDB)</small>
+        </div>
+        <input type="file" id="fileInput" accept=".pdf,.epub,.txt" style="display:none;">
+        <div class="file-selected" id="fileSelected">
+          <span>📄</span>
+          <div class="info">
+            <div class="name" id="fileName"></div>
+            <div class="size" id="fileSize"></div>
+          </div>
+          <button class="btn btn-danger btn-small" onclick="event.stopPropagation(); clearFile();">✕</button>
+        </div>
+        <div class="progress-bar" id="progressBar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="uploadBook()" style="width:100%; padding:0.9rem; font-size:1rem; margin-top:1rem;">
+        📤 Upload Book
+      </button>
+    </div>
+
+    <!-- BOOK LIST -->
+    <div class="book-list">
+      <h2>📋 Library (<span id="bookCount">0</span> books)</h2>
+      <div id="bookList">Loading...</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============ INDEXEDDB SETUP ============
+    const DB_NAME = 'InkboundBooks';
+    const DB_VERSION = 1;
+    let db = null;
+
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        
+        request.onupgradeneeded = function(e) {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('books')) {
+            db.createObjectStore('books', { keyPath: 'id' });
+          }
+          if (!db.objectStoreNames.contains('files')) {
+            db.createObjectStore('files', { keyPath: 'bookId' });
+          }
+          if (!db.objectStoreNames.contains('covers')) {
+            db.createObjectStore('covers', { keyPath: 'bookId' });
+          }
+        };
+
+        request.onsuccess = function(e) {
+          db = e.target.result;
+          console.log('✅ IndexedDB connected');
+          resolve(db);
+        };
+
+        request.onerror = function(e) {
+          console.error('❌ IndexedDB error:', e.target.error);
+          reject(e.target.error);
+        };
+      });
+    }
+
+    // ============ SAVE/LOAD FUNCTIONS ============
+    async function saveBookData(book) {
+      const tx = db.transaction('books', 'readwrite');
+      const store = tx.objectStore('books');
+      await new Promise((resolve, reject) => {
+        const req = store.put(book);
+        req.onsuccess = resolve;
+        req.onerror = reject;
+      });
+    }
+
+    async function saveFileData(bookId, fileData) {
+      const tx = db.transaction('files', 'readwrite');
+      const store = tx.objectStore('files');
+      await new Promise((resolve, reject) => {
+        const req = store.put({ bookId: bookId, data: fileData });
+        req.onsuccess = resolve;
+        req.onerror = reject;
+      });
+    }
+
+    async function saveCoverData(bookId, coverData) {
+      const tx = db.transaction('covers', 'readwrite');
+      const store = tx.objectStore('covers');
+      await new Promise((resolve, reject) => {
+        const req = store.put({ bookId: bookId, data: coverData });
+        req.onsuccess = resolve;
+        req.onerror = reject;
+      });
+    }
+
+    async function getAllBooks() {
+      const tx = db.transaction('books', 'readonly');
+      const store = tx.objectStore('books');
+      return new Promise((resolve, reject) => {
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = reject;
+      });
+    }
+
+    async function getFileData(bookId) {
+      const tx = db.transaction('files', 'readonly');
+      const store = tx.objectStore('files');
+      return new Promise((resolve) => {
+        const req = store.get(bookId);
+        req.onsuccess = () => resolve(req.result?.data || null);
+        req.onerror = () => resolve(null);
+      });
+    }
+
+    async function getCoverData(bookId) {
+      const tx = db.transaction('covers', 'readonly');
+      const store = tx.objectStore('covers');
+      return new Promise((resolve) => {
+        const req = store.get(bookId);
+        req.onsuccess = () => resolve(req.result?.data || null);
+        req.onerror = () => resolve(null);
+      });
+    }
+
+    async function deleteBook(bookId) {
+      // Delete from all stores
+      for (const storeName of ['books', 'files', 'covers']) {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        await new Promise((resolve) => {
+          store.delete(bookId);
+          tx.oncomplete = resolve;
+        });
+      }
+    }
+
+    async function updateStorageInfo() {
+      if (navigator.storage && navigator.storage.estimate) {
+        const estimate = await navigator.storage.estimate();
+        const used = (estimate.usage / 1024 / 1024).toFixed(1);
+        const total = (estimate.quota / 1024 / 1024).toFixed(0);
+        document.getElementById('storageUsed').textContent = `${used}MB used / ${total}MB total`;
+      }
+    }
+
+    // ============ STATE ============
+    let selectedFile = null;
+    let selectedCover = null;
+
+    function showMessage(text, type) {
+      const box = document.getElementById('messageBox');
+      box.textContent = text;
+      box.className = 'message ' + type;
+      setTimeout(() => { box.className = 'message'; }, 5000);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    function formatSize(bytes) {
+      if (!bytes) return '';
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    // ============ FILE HANDLING ============
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        selectedFile = file;
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = formatSize(file.size);
+        document.getElementById('fileSelected').classList.add('show');
+        console.log('📄 File selected:', file.name, formatSize(file.size));
+      }
+    });
+
+    document.getElementById('coverInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          selectedCover = ev.target.result;
+          console.log('🖼️ Cover selected');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function clearFile() {
+      selectedFile = null;
+      document.getElementById('fileInput').value = '';
+      document.getElementById('fileSelected').classList.remove('show');
+    }
+
+    // ============ UPLOAD ============
+    async function uploadBook() {
+      const title = document.getElementById('bookTitle').value.trim();
+      const author = document.getElementById('bookAuthor').value.trim();
+
+      if (!title) { showMessage('Please enter a title.', 'error'); return; }
+      if (!author) { showMessage('Please enter an author.', 'error'); return; }
+      if (!selectedFile) { showMessage('Please select a book file.', 'error'); return; }
+
+      const progressBar = document.getElementById('progressBar');
+      const progressFill = document.getElementById('progressFill');
+      progressBar.classList.add('show');
+      progressFill.style.width = '0%';
+
+      showMessage('📖 Processing file...', 'info');
+
+      // Read file
+      const reader = new FileReader();
+      
+      reader.onprogress = function(e) {
+        if (e.lengthComputable) {
+          const pct = Math.round((e.loaded / e.total) * 100);
+          progressFill.style.width = pct + '%';
+        }
+      };
+
+      reader.onload = async function(e) {
+        progressFill.style.width = '100%';
+
+        const bookId = Date.now();
+        const bookInfo = {
+          id: bookId,
+          title: title,
+          author: author,
+          genre: document.getElementById('bookGenre').value,
+          language: document.getElementById('bookLanguage').value.trim() || 'English',
+          pages: parseInt(document.getElementById('bookPages').value) || 0,
+          year: parseInt(document.getElementById('bookYear').value) || new Date().getFullYear(),
+          description: document.getElementById('bookDescription').value.trim(),
+          fileName: selectedFile.name,
+          fileType: selectedFile.type,
+          fileSize: selectedFile.size,
+          hasCover: !!selectedCover,
+          rating: 0,
+          reviews: [],
+          available: true,
+          price: (Math.random() * 15 + 5).toFixed(2),
+          uploadDate: new Date().toISOString()
+        };
+
+        try {
+          // Save book info
+          await saveBookData(bookInfo);
+          
+          // Save file data
+          await saveFileData(bookId, e.target.result);
+          
+          // Save cover if exists
+          if (selectedCover) {
+            await saveCoverData(bookId, selectedCover);
+          }
+
+          console.log('✅ Book saved to IndexedDB!');
+          showMessage('✅ "' + title + '" uploaded successfully!', 'success');
+          showToast('📚 Book added!');
+
+          // Reset form
+          document.getElementById('bookTitle').value = '';
+          document.getElementById('bookAuthor').value = '';
+          document.getElementById('bookPages').value = '';
+          document.getElementById('bookYear').value = '';
+          document.getElementById('bookDescription').value = '';
+          document.getElementById('coverInput').value = '';
+          selectedCover = null;
+          clearFile();
+          progressBar.classList.remove('show');
+          progressFill.style.width = '0%';
+
+          await updateStorageInfo();
+          await renderBookList();
+        } catch (err) {
+          console.error('Save error:', err);
+          showMessage('❌ Error saving: ' + err.message, 'error');
+          progressBar.classList.remove('show');
+        }
+      };
+
+      reader.onerror = function() {
+        showMessage('❌ Error reading file.', 'error');
+        progressBar.classList.remove('show');
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
+
+    // ============ RENDER ============
+    async function renderBookList() {
+      const container = document.getElementById('bookList');
+      const books = await getAllBooks();
+      
+      document.getElementById('bookCount').textContent = books.length;
+
+      if (books.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#999; padding:2rem;">No books yet. Upload your first book above!</p>';
+        return;
+      }
+
+      container.innerHTML = books.sort((a, b) => b.id - a.id).map(book => `
+        <div class="book-item">
+          <div class="item-info">
+            <strong>${book.title}</strong>
+            <small>${book.author} · ${book.genre} · ${book.pages}p · ${book.year}</small>
+            <div class="has-file">📄 ${book.fileName} (${formatSize(book.fileSize)})</div>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-outline btn-small" onclick="previewBook(${book.id})">👁 View</button>
+            <button class="btn btn-danger btn-small" onclick="removeBook(${book.id})">🗑 Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function previewBook(id) {
+      // Save book ID for detail page
+      localStorage.setItem('inkbound_current_book', id);
+      window.open('book-detail.html?id=' + id, '_blank');
+    }
+
+    async function removeBook(id) {
+      if (confirm('Delete this book? This cannot be undone.')) {
+        await deleteBook(id);
+        await updateStorageInfo();
+        await renderBookList();
+        showToast('🗑️ Book deleted');
+      }
+    }
+
+    // ============ INIT ============
+    async function init() {
+      try {
+        await openDB();
+        await updateStorageInfo();
+        await renderBookList();
+        console.log('🚀 Admin panel ready (IndexedDB)');
+      } catch (err) {
+        console.error('Init error:', err);
+        document.getElementById('bookList').innerHTML = '<p style="color:red;">Error initializing database. Please try a different browser.</p>';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

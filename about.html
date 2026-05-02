@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Inkbound - Your public bookshelf. Discover, read, and discuss books.">
+<meta name="keywords" content="books, reading, library, community, reviews">
+  <title>Inkbound - About & Contact</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #fdf8f2;
+      --card: #fffbf5;
+      --text: #2e241b;
+      --text-light: #5c4a3a;
+      --text-lighter: #7a6a5c;
+      --accent: #5e3e2c;
+      --accent-hover: #4a2f1f;
+      --gold: #b9906a;
+      --border: #e4d5c3;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+      --font-serif: Georgia, 'Times New Roman', serif;
+      --font-sans: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body.dark-mode {
+      --bg: #1a1a2e;
+      --card: #252540;
+      --text: #e0d6c8;
+      --text-light: #c4b8a8;
+      --text-lighter: #a89880;
+      --accent: #c4956a;
+      --accent-hover: #d4a87a;
+      --gold: #c4956a;
+      --border: #3a3a55;
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: var(--card);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #1e3b4a;
+      text-decoration: none;
+    }
+
+    body.dark-mode .logo {
+      color: #c4956a;
+    }
+
+    .logo i {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-weight: 500;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent);
+    }
+
+    .btn {
+      padding: 0.5rem 1.3rem;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .dark-toggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text);
+      padding: 0.4rem;
+      border-radius: 50%;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: linear-gradient(135deg, #3d2b1f 0%, #5e3e2c 100%);
+      color: white;
+      border-radius: 20px;
+      margin-bottom: 2.5rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+
+    /* ABOUT SECTION */
+    .about-section {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 2.5rem;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .about-section h2 {
+      font-family: var(--font-serif);
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      font-size: 1.5rem;
+    }
+
+    .about-section p {
+      line-height: 1.8;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .mission-box {
+      background: rgba(94,62,44,0.06);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--accent);
+    }
+
+    body.dark-mode .mission-box {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .team-member {
+      text-align: center;
+    }
+
+    .team-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #c4a882, #8b6f55);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 0.8rem;
+      font-weight: bold;
+    }
+
+    .team-member h4 {
+      font-size: 0.95rem;
+    }
+
+    .team-member small {
+      color: var(--text-lighter);
+    }
+
+    /* CONTACT SECTION */
+    .contact-section {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 2.5rem;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .contact-section h2 {
+      font-family: var(--font-serif);
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      font-size: 1.5rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 700px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      transition: border 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .contact-info-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--bg);
+      border-radius: 12px;
+    }
+
+    .contact-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .social-link {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .social-link:hover {
+      background: var(--accent-hover);
+      transform: translateY(-3px);
+    }
+
+    /* FAQ SECTION */
+    .faq-section {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 2.5rem;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .faq-section h2 {
+      font-family: var(--font-serif);
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.05rem;
+      padding: 0.5rem 0;
+      transition: 0.2s;
+    }
+
+    .faq-question:hover {
+      color: var(--accent);
+    }
+
+    .faq-question i {
+      transition: transform 0.3s;
+      color: var(--accent);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+      padding: 0.8rem 0;
+    }
+
+    .faq-item.open .faq-question i {
+      transform: rotate(180deg);
+    }
+
+    /* SUCCESS/ERROR MESSAGES */
+    .form-message {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+      display: none;
+      font-weight: 500;
+    }
+
+    .form-message.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+    }
+
+    .form-message.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1e3b4a;
+      color: white;
+      padding: 1rem 1.8rem;
+      border-radius: 40px;
+      z-index: 2000;
+      display: none;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <!-- UNIFIED NAVBAR - Copy this to ALL pages -->
+<!-- UNIFIED NAVBAR - Copy this to ALL pages -->
+<nav class="navbar">
+  <a href="index.html" class="logo">
+    <i class="fas fa-book-open"></i>
+    Ink<span>bound</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" id="nav-home"><i class="fas fa-home"></i> Home</a>
+    <a href="browse.html" id="nav-browse"><i class="fas fa-compass"></i> Browse</a>
+    <a href="community.html" id="nav-community"><i class="fas fa-users"></i> Community</a>
+    <a href="about.html" id="nav-about"><i class="fas fa-info-circle"></i> About</a>
+    <button class="dark-toggle" onclick="toggleDarkMode()" title="Dark mode">
+      <i class="fas fa-moon" id="darkIcon"></i>
+    </button>
+    <a href="account.html" class="btn btn-primary"><i class="fas fa-user"></i> Account</a>
+    </a>
+  </div>
+</nav>
+
+<script>
+  // Highlight active nav link
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === currentPage) {
+      link.classList.add('active');
+    }
+  });
+
+  // Update account button text
+  const currentUser = JSON.parse(localStorage.getItem('inkbound_current_user'));
+  if (currentUser) {
+    document.getElementById('navAccountText').textContent = currentUser.name.split(' ')[0];
+  }
+
+  // Dark mode sync
+  const isDark = localStorage.getItem('inkbound_darkmode') === 'true';
+  if (isDark) {
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkIcon').className = 'fas fa-sun';
+  }
+
+  function toggleDarkMode() {
+    const dark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('inkbound_darkmode', dark);
+    document.getElementById('darkIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+  }
+</script>
+
+<script>
+  // Highlight active nav link
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === currentPage) {
+      link.classList.add('active');
+    }
+  });
+
+  // Update account button text
+  const currentUser = JSON.parse(localStorage.getItem('inkbound_current_user'));
+  if (currentUser) {
+    document.getElementById('navAccountText').textContent = currentUser.name.split(' ')[0];
+  }
+
+  // Dark mode sync
+  const isDark = localStorage.getItem('inkbound_darkmode') === 'true';
+  if (isDark) {
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkIcon').className = 'fas fa-sun';
+  }
+
+  function toggleDarkMode() {
+    const dark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('inkbound_darkmode', dark);
+    document.getElementById('darkIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+  }
+</script>
+
+  <div class="container">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <h1>About Inkbound</h1>
+      <p>Building a home for readers, one book at a time</p>
+    </div>
+
+    <!-- ABOUT SECTION -->
+    <div class="about-section">
+      <h2>📚 Our Story</h2>
+      <p>
+        Inkbound was born from a simple love of books and the desire to create a space where readers 
+        can discover, discuss, and share their passion for literature. Founded in 2024, we've grown 
+        from a small book club into a thriving community of thousands of readers worldwide.
+      </p>
+      <p>
+        We believe that every book has the power to change a life, spark an idea, or provide comfort 
+        in difficult times. Our mission is to connect readers with stories that matter.
+      </p>
+
+      <div class="mission-box">
+        <strong style="font-size:1.1rem;">🎯 Our Mission</strong>
+        <p style="margin-top:0.5rem;">
+          To create the most welcoming and useful public bookshelf on the internet — a place where 
+          anyone can find their next great read, share their thoughts, and connect with fellow book lovers.
+        </p>
+      </div>
+
+      <h2 style="margin-top:2rem;">👥 Meet the Team</h2>
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="team-avatar">A</div>
+          <h4>Alex Morgan</h4>
+          <small>Founder & Curator</small>
+        </div>
+        <div class="team-member">
+          <div class="team-avatar">S</div>
+          <h4>Sarah Chen</h4>
+          <small>Community Manager</small>
+        </div>
+        <div class="team-member">
+          <div class="team-avatar">M</div>
+          <h4>Marcus Johnson</h4>
+          <small>Content Editor</small>
+        </div>
+        <div class="team-member">
+          <div class="team-avatar">E</div>
+          <h4>Elena Rodriguez</h4>
+          <small>Developer</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT SECTION -->
+    <div class="contact-section">
+      <h2>📬 Get in Touch</h2>
+      <div class="contact-grid">
+        <div>
+          <form id="contactForm" onsubmit="handleContactSubmit(event)">
+            <div class="form-group">
+              <label>Your Name *</label>
+              <input type="text" id="contactName" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" id="contactEmail" placeholder="john@example.com" required>
+            </div>
+            <div class="form-group">
+              <label>Subject</label>
+              <select id="contactSubject">
+                <option value="general">General Inquiry</option>
+                <option value="support">Technical Support</option>
+                <option value="suggestion">Book Suggestion</option>
+                <option value="partnership">Partnership</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Message *</label>
+              <textarea id="contactMessage" placeholder="Tell us what's on your mind..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+            <div class="form-message" id="formMessage"></div>
+          </form>
+        </div>
+        <div class="contact-info">
+          <div class="contact-info-item">
+            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <strong>Email</strong>
+              <p style="color:var(--text-lighter);">hello@inkbound.pub</p>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <strong>Location</strong>
+              <p style="color:var(--text-lighter);">Portland, Oregon</p>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <strong>Response Time</strong>
+              <p style="color:var(--text-lighter);">Within 24 hours</p>
+            </div>
+          </div>
+          <div>
+            <strong style="display:block; margin-bottom:0.5rem;">Follow Us</strong>
+            <div class="social-links">
+              <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="social-link" title="Goodreads"><i class="fab fa-goodreads"></i></a>
+              <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook"></i></a>
+              <a href="#" class="social-link" title="Discord"><i class="fab fa-discord"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="faq-section">
+      <h2>❓ Frequently Asked Questions</h2>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>How do I upload books to Inkbound?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>Book uploading is available through our Admin Dashboard. After logging in with an admin account, 
+          you can upload book covers, add descriptions, and manage the entire catalog. Regular users can 
+          suggest books through our contact form.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Is Inkbound free to use?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>Yes! Inkbound is completely free for readers. We believe in open access to literature 
+          and community discussion. Some premium features may be added in the future, but the core 
+          experience will always remain free.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Can I read books directly on the website?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>Yes! Our online reader supports dark mode, bookmarking, and a comfortable reading experience. 
+          Simply click "Read Online" on any book's detail page to start reading. You can bookmark your 
+          page and resume reading anytime.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>How do I save my favorite books?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>After creating a free account, you can add books to your Favorites or Wishlist with one click. 
+          All your saved books appear in your user dashboard, accessible from any device when you're logged in.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>How can I contribute to the community?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>You can write reviews, rate books, participate in discussions, and recommend books to other 
+          readers. Active community members may be invited to become moderators or content curators.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Is my data secure?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>We take privacy seriously. Your account information is stored securely, and we never share 
+          your personal data with third parties. You can delete your account and all associated data at any time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Dark mode
+    let isDarkMode = localStorage.getItem('inkbound_darkmode') === 'true';
+    
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+      document.getElementById('darkIcon').className = 'fas fa-sun';
+    }
+
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode', isDarkMode);
+      document.getElementById('darkIcon').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+      localStorage.setItem('inkbound_darkmode', isDarkMode);
+    }
+
+    // FAQ toggle
+    function toggleFaq(questionEl) {
+      const faqItem = questionEl.parentElement;
+      const isOpen = faqItem.classList.contains('open');
+      
+      // Close all FAQs first (optional - remove if you want multiple open)
+      document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
+      
+      // Toggle clicked one
+      if (!isOpen) {
+        faqItem.classList.add('open');
+      }
+    }
+
+    // Contact form
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const subject = document.getElementById('contactSubject').value;
+      const message = document.getElementById('contactMessage').value.trim();
+      const msgBox = document.getElementById('formMessage');
+
+      if (!name || !email || !message) {
+        msgBox.className = 'form-message error';
+        msgBox.textContent = 'Please fill in all required fields.';
+        return;
+      }
+
+      if (!email.includes('@') || !email.includes('.')) {
+        msgBox.className = 'form-message error';
+        msgBox.textContent = 'Please enter a valid email address.';
+        return;
+      }
+
+      // Save contact message to localStorage
+      const contacts = JSON.parse(localStorage.getItem('inkbound_contacts')) || [];
+      contacts.push({
+        id: Date.now(),
+        name,
+        email,
+        subject,
+        message,
+        date: new Date().toISOString(),
+        read: false
+      });
+      localStorage.setItem('inkbound_contacts', JSON.stringify(contacts));
+
+      // Clear form
+      document.getElementById('contactName').value = '';
+      document.getElementById('contactEmail').value = '';
+      document.getElementById('contactMessage').value = '';
+      document.getElementById('contactSubject').value = 'general';
+
+      // Show success
+      msgBox.className = 'form-message success';
+      msgBox.textContent = '✅ Thank you! Your message has been sent. We\'ll respond within 24 hours.';
+
+      // Show toast
+      showToast('📬 Message sent successfully!');
+
+      // Hide success message after 5 seconds
+      setTimeout(() => {
+        msgBox.className = 'form-message';
+        msgBox.textContent = '';
+      }, 5000);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    // Open first FAQ by default
+    document.querySelector('.faq-item')?.classList.add('open');
+  </script>
+</body>
+</html>

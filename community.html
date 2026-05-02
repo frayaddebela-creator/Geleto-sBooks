@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Inkbound - Your public bookshelf. Discover, read, and discuss books.">
+<meta name="keywords" content="books, reading, library, community, reviews">
+  <title>Inkbound - Community</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #fdf8f2;
+      --card: #fffbf5;
+      --text: #2e241b;
+      --text-light: #5c4a3a;
+      --text-lighter: #7a6a5c;
+      --accent: #5e3e2c;
+      --accent-hover: #4a2f1f;
+      --gold: #b9906a;
+      --border: #e4d5c3;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+      --tag-bg: #f0e6d8;
+      --font-serif: Georgia, 'Times New Roman', serif;
+      --font-sans: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body.dark-mode {
+      --bg: #1a1a2e;
+      --card: #252540;
+      --text: #e0d6c8;
+      --text-light: #c4b8a8;
+      --text-lighter: #a89880;
+      --accent: #c4956a;
+      --accent-hover: #d4a87a;
+      --gold: #c4956a;
+      --border: #3a3a55;
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+      --tag-bg: #3a3050;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: var(--card);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #1e3b4a;
+      text-decoration: none;
+    }
+
+    body.dark-mode .logo {
+      color: #c4956a;
+    }
+
+    .logo i {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-weight: 500;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent);
+    }
+
+    .btn {
+      padding: 0.5rem 1.3rem;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .dark-toggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text);
+      padding: 0.4rem;
+      border-radius: 50%;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* HERO */
+    .community-hero {
+      background: linear-gradient(135deg, #3d2b1f 0%, #5e3e2c 100%);
+      color: white;
+      padding: 2.5rem 2rem;
+      border-radius: 20px;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .community-hero h1 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .community-hero p {
+      opacity: 0.9;
+    }
+
+    /* LAYOUT */
+    .community-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+    }
+
+    @media (max-width: 800px) {
+      .community-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* NEW POST */
+    .new-post-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .new-post-card h3 {
+      font-family: var(--font-serif);
+      margin-bottom: 1rem;
+    }
+
+    .new-post-card input,
+    .new-post-card textarea,
+    .new-post-card select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 0.8rem;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+    }
+
+    .new-post-card textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* DISCUSSION CARDS */
+    .discussion-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      margin-bottom: 1.2rem;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .discussion-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .user-avatar-small {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .discussion-meta {
+      font-size: 0.85rem;
+      color: var(--text-lighter);
+    }
+
+    .discussion-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .discussion-body {
+      color: var(--text-light);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .tag {
+      background: var(--tag-bg);
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      display: inline-block;
+      margin-right: 0.3rem;
+    }
+
+    .discussion-actions {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-lighter);
+      cursor: pointer;
+      flex-wrap: wrap;
+    }
+
+    .discussion-actions span:hover {
+      color: var(--accent);
+    }
+
+    /* COMMENTS SECTION */
+    .comments-section {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    .comments-section.open {
+      display: block;
+    }
+
+    .comment {
+      background: var(--bg);
+      padding: 0.8rem;
+      border-radius: 10px;
+      margin-bottom: 0.6rem;
+    }
+
+    .comment-author {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .comment-text {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    .add-comment {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+    }
+
+    .add-comment input {
+      flex: 1;
+      padding: 0.6rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* SIDEBAR */
+    .sidebar-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .sidebar-card h4 {
+      font-family: var(--font-serif);
+      margin-bottom: 1rem;
+    }
+
+    .trending-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .trending-item:last-child {
+      border-bottom: none;
+    }
+
+    .trending-rank {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--accent);
+      width: 30px;
+    }
+
+    .recommendation-box {
+      background: rgba(94,62,44,0.06);
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+
+    body.dark-mode .recommendation-box {
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1e3b4a;
+      color: white;
+      padding: 1rem 1.8rem;
+      border-radius: 40px;
+      z-index: 2000;
+      display: none;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .heart-liked {
+      color: #e74c3c !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <!-- UNIFIED NAVBAR - Copy this to ALL pages -->
+<nav class="navbar">
+  <a href="index.html" class="logo">
+    <i class="fas fa-book-open"></i>
+    Ink<span>bound</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" id="nav-home"><i class="fas fa-home"></i> Home</a>
+    <a href="browse.html" id="nav-browse"><i class="fas fa-compass"></i> Browse</a>
+    <a href="community.html" id="nav-community"><i class="fas fa-users"></i> Community</a>
+    <a href="about.html" id="nav-about"><i class="fas fa-info-circle"></i> About</a>
+    <button class="dark-toggle" onclick="toggleDarkMode()" title="Dark mode">
+      <i class="fas fa-moon" id="darkIcon"></i>
+    </button>
+    <a href="account.html" class="btn btn-primary"><i class="fas fa-user"></i> <span id="authText">Account</span></a>
+    </a>
+  </div>
+</nav>
+
+<script>
+  // Highlight active nav link
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === currentPage) {
+      link.classList.add('active');
+    }
+  });
+
+  // Update account button text
+  const currentUser = JSON.parse(localStorage.getItem('inkbound_current_user'));
+  if (currentUser) {
+    document.getElementById('navAccountText').textContent = currentUser.name.split(' ')[0];
+  }
+
+  // Dark mode sync
+  const isDark = localStorage.getItem('inkbound_darkmode') === 'true';
+  if (isDark) {
+    document.body.classList.add('dark-mode');
+    document.getElementById('darkIcon').className = 'fas fa-sun';
+  }
+
+  function toggleDarkMode() {
+    const dark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('inkbound_darkmode', dark);
+    document.getElementById('darkIcon').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+  }
+</script>
+
+  <div class="container">
+    <!-- HERO -->
+    <div class="community-hero">
+      <h1>📚 Reader Community</h1>
+      <p>Discuss books, share thoughts, and discover new reads together</p>
+    </div>
+
+    <div class="community-layout">
+      <!-- MAIN CONTENT -->
+      <div>
+        <!-- NEW POST -->
+        <div class="new-post-card" id="newPostCard">
+          <h3>💬 Start a Discussion</h3>
+          <input type="text" id="postTitle" placeholder="Discussion title...">
+          <select id="postTag">
+            <option value="">Select category</option>
+            <option value="Book Review">Book Review</option>
+            <option value="Recommendation">Recommendation</option>
+            <option value="Question">Question</option>
+            <option value="Discussion">General Discussion</option>
+            <option value="Spoiler">Spoiler Talk</option>
+          </select>
+          <textarea id="postBody" placeholder="Share your thoughts with the community..."></textarea>
+          <button class="btn btn-primary" onclick="createPost()">
+            <i class="fas fa-paper-plane"></i> Post Discussion
+          </button>
+          <p id="postError" style="color:#c0392b; font-size:0.85rem; margin-top:0.5rem; display:none;"></p>
+        </div>
+
+        <!-- DISCUSSIONS LIST -->
+        <div id="discussionsList">
+          <p style="color:var(--text-lighter); text-align:center; padding:2rem;">Loading discussions...</p>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div>
+        <div class="sidebar-card">
+          <h4>🔥 Trending Discussions</h4>
+          <div id="trendingList">
+            <div class="trending-item">
+              <span class="trending-rank">1</span>
+              <span>Best fantasy books of 2025?</span>
+            </div>
+            <div class="trending-item">
+              <span class="trending-rank">2</span>
+              <span>Dune vs Foundation debate</span>
+            </div>
+            <div class="trending-item">
+              <span class="trending-rank">3</span>
+              <span>Books that changed your life</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <h4>📖 Book of the Month</h4>
+          <div class="recommendation-box">
+            <strong>Dune</strong> by Frank Herbert
+            <p style="font-size:0.85rem; color:var(--text-lighter); margin-top:0.3rem;">
+              "A masterpiece of science fiction that continues to inspire readers worldwide."
+            </p>
+            <small style="color:var(--accent);">★ 4.7 community rating</small>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <h4>👥 Active Readers</h4>
+          <p style="color:var(--text-lighter);">
+            <i class="fas fa-circle" style="color:#27ae60; font-size:0.6rem;"></i> 
+            <span id="onlineCount">0</span> readers online now
+          </p>
+          <p style="font-size:0.85rem; color:var(--text-lighter); margin-top:0.5rem;">
+            Join the conversation!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============ STATE ============
+    let currentUser = JSON.parse(localStorage.getItem('inkbound_current_user')) || null;
+    let discussions = JSON.parse(localStorage.getItem('inkbound_discussions')) || [];
+    let isDarkMode = localStorage.getItem('inkbound_darkmode') === 'true';
+
+    // Apply dark mode
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+      document.getElementById('darkIcon').className = 'fas fa-sun';
+    }
+
+    // Update auth button
+    updateAuthButton();
+
+    function updateAuthButton() {
+      const authText = document.getElementById('authText');
+      const authBtn = document.getElementById('authBtn');
+      if (currentUser) {
+        authText.textContent = currentUser.name.split(' ')[0];
+        authBtn.innerHTML = `<i class="fas fa-user-check"></i> ${currentUser.name.split(' ')[0]}`;
+        authBtn.onclick = handleLogout;
+      } else {
+        authText.textContent = 'Login';
+        authBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+        authBtn.onclick = () => { window.location.href = '#'; };
+      }
+    }
+
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode', isDarkMode);
+      document.getElementById('darkIcon').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+      localStorage.setItem('inkbound_darkmode', isDarkMode);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('inkbound_current_user');
+      updateAuthButton();
+      renderDiscussions();
+      showToast('👋 Logged out');
+    }
+
+    // ============ DISCUSSIONS ============
+    function createPost() {
+      if (!currentUser) {
+        showToast('🔒 Please login to post!');
+        return;
+      }
+
+      const title = document.getElementById('postTitle').value.trim();
+      const tag = document.getElementById('postTag').value;
+      const body = document.getElementById('postBody').value.trim();
+      const errorEl = document.getElementById('postError');
+
+      if (!title || !body) {
+        errorEl.textContent = 'Title and body are required!';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      errorEl.style.display = 'none';
+
+      const newPost = {
+        id: Date.now(),
+        userId: currentUser.id,
+        userName: currentUser.name,
+        title,
+        tag: tag || 'Discussion',
+        body,
+        likes: [],
+        comments: [],
+        createdAt: new Date().toISOString()
+      };
+
+      discussions.unshift(newPost);
+      localStorage.setItem('inkbound_discussions', JSON.stringify(discussions));
+
+      document.getElementById('postTitle').value = '';
+      document.getElementById('postBody').value = '';
+      document.getElementById('postTag').value = '';
+
+      renderDiscussions();
+      showToast('✅ Discussion posted!');
+    }
+
+    function toggleLike(postId) {
+      if (!currentUser) {
+        showToast('🔒 Login to like discussions');
+        return;
+      }
+
+      const post = discussions.find(d => d.id === postId);
+      if (!post) return;
+
+      const userIndex = post.likes.indexOf(currentUser.id);
+      if (userIndex > -1) {
+        post.likes.splice(userIndex, 1);
+      } else {
+        post.likes.push(currentUser.id);
+      }
+
+      localStorage.setItem('inkbound_discussions', JSON.stringify(discussions));
+      renderDiscussions();
+    }
+
+    function toggleComments(postId) {
+      const section = document.getElementById(`comments-${postId}`);
+      if (section) {
+        section.classList.toggle('open');
+      }
+    }
+
+    function addComment(postId) {
+      if (!currentUser) {
+        showToast('🔒 Login to comment');
+        return;
+      }
+
+      const input = document.getElementById(`commentInput-${postId}`);
+      const text = input.value.trim();
+      if (!text) return;
+
+      const post = discussions.find(d => d.id === postId);
+      if (!post) return;
+
+      post.comments.push({
+        id: Date.now(),
+        userId: currentUser.id,
+        userName: currentUser.name,
+        text,
+        createdAt: new Date().toISOString()
+      });
+
+      localStorage.setItem('inkbound_discussions', JSON.stringify(discussions));
+      input.value = '';
+      renderDiscussions();
+      // Keep comments open
+      setTimeout(() => {
+        document.getElementById(`comments-${postId}`)?.classList.add('open');
+      }, 100);
+    }
+
+    function renderDiscussions() {
+      const container = document.getElementById('discussionsList');
+
+      if (discussions.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:3rem; color:var(--text-lighter);">
+            <i class="fas fa-comments" style="font-size:3rem;"></i>
+            <h3>No discussions yet</h3>
+            <p>Be the first to start a conversation!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = discussions.map(post => {
+        const isLiked = currentUser && post.likes.includes(currentUser.id);
+        return `
+          <div class="discussion-card">
+            <div class="discussion-header">
+              <div class="user-avatar-small">${post.userName.charAt(0).toUpperCase()}</div>
+              <div>
+                <strong>${post.userName}</strong>
+                <div class="discussion-meta">
+                  ${new Date(post.createdAt).toLocaleDateString()} · 
+                  <span class="tag">${post.tag}</span>
+                </div>
+              </div>
+            </div>
+            <div class="discussion-title">${post.title}</div>
+            <div class="discussion-body">${post.body}</div>
+            <div class="discussion-actions">
+              <span onclick="toggleLike(${post.id})" class="${isLiked ? 'heart-liked' : ''}">
+                <i class="fas fa-heart"></i> ${post.likes.length} Likes
+              </span>
+              <span onclick="toggleComments(${post.id})">
+                <i class="fas fa-comment"></i> ${post.comments.length} Comments
+              </span>
+              <span><i class="fas fa-share"></i> Share</span>
+            </div>
+            <div class="comments-section" id="comments-${post.id}">
+              ${post.comments.map(c => `
+                <div class="comment">
+                  <span class="comment-author">${c.userName}</span>
+                  <span class="discussion-meta">· ${new Date(c.createdAt).toLocaleDateString()}</span>
+                  <div class="comment-text">${c.text}</div>
+                </div>
+              `).join('')}
+              <div class="add-comment">
+                <input type="text" id="commentInput-${post.id}" placeholder="Write a comment...">
+                <button class="btn btn-primary" style="padding:0.4rem 1rem; border-radius:20px;" onclick="addComment(${post.id})">
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Simulate online count
+    document.getElementById('onlineCount').textContent = Math.floor(Math.random() * 50) + 5;
+
+    // Initialize
+    renderDiscussions();
+    document.getElementById('authBtn').addEventListener('click', function() {
+  if (!currentUser) {
+    window.location.href = 'account.html';
+  }
+});
+  </script>
+</body>
+</html>

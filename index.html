@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inkbound - Discover Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg: #fdf8f2; --card: #fffbf5; --text: #2e241b; --text-light: #5c4a3a;
+      --accent: #5e3e2c; --accent-hover: #4a2f1f; --border: #e4d5c3;
+      --shadow: 0 4px 15px rgba(0,0,0,0.06); --font-serif: Georgia,serif;
+      --font-sans: 'Segoe UI',system-ui,sans-serif;
+    }
+    body.dark-mode {
+      --bg: #1a1a2e; --card: #252540; --text: #e0d6c8; --text-light: #c4b8a8;
+      --accent: #c4956a; --border: #3a3a55; --shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    body { background:var(--bg); color:var(--text); font-family:var(--font-sans); min-height:100vh; transition:0.3s; }
+    .navbar { background:var(--card); padding:1rem 2rem; box-shadow:0 2px 10px rgba(0,0,0,0.05); position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; border-bottom:1px solid var(--border); }
+    .logo { display:flex; align-items:center; gap:0.5rem; font-family:var(--font-serif); font-size:1.6rem; font-weight:bold; color:#1e3b4a; text-decoration:none; }
+    body.dark-mode .logo { color:#c4956a; }
+    .logo i { color:var(--accent); }
+    .nav-links { display:flex; gap:1.5rem; align-items:center; flex-wrap:wrap; }
+    .nav-links a { text-decoration:none; color:var(--text-light); font-weight:500; font-size:0.9rem; display:flex; align-items:center; gap:0.3rem; }
+    .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+    .btn { padding:0.5rem 1.3rem; border-radius:25px; border:none; cursor:pointer; font-weight:600; font-size:0.9rem; display:inline-flex; align-items:center; gap:0.4rem; }
+    .btn-primary { background:var(--accent); color:white; }
+    .btn-primary:hover { background:var(--accent-hover); }
+    .dark-toggle { background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text); padding:0.4rem; border-radius:50%; }
+    .hero { background:linear-gradient(135deg,#1e3b4a,#2c5a6e); color:white; padding:3rem 2rem; text-align:center; border-radius:0 0 40px 40px; margin-bottom:2rem; }
+    .hero h1 { font-family:var(--font-serif); font-size:2.5rem; margin-bottom:0.5rem; }
+    .search-container { max-width:650px; margin:-25px auto 2rem; padding:0 1rem; }
+    .search-box { display:flex; background:white; border-radius:50px; padding:0.3rem; box-shadow:0 8px 30px rgba(0,0,0,0.12); }
+    .search-box input { flex:1; border:none; padding:1rem 1.5rem; font-size:1rem; outline:none; border-radius:50px 0 0 50px; background:transparent; color:#333; }
+    .search-box button { background:var(--accent); color:white; border:none; padding:0.8rem 2rem; border-radius:50px; font-weight:bold; cursor:pointer; margin:0.2rem; }
+    .container { max-width:1200px; margin:0 auto; padding:0 1.5rem; }
+    .categories { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:2rem; justify-content:center; }
+    .category-pill { padding:0.5rem 1.3rem; border-radius:30px; border:1px solid var(--border); background:white; cursor:pointer; font-weight:500; font-size:0.9rem; color:var(--text); }
+    .category-pill:hover, .category-pill.active { background:#1e3b4a; color:white; border-color:#1e3b4a; }
+    body.dark-mode .category-pill { background:var(--card); }
+    .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
+    .section-header h2 { font-family:var(--font-serif); font-size:1.6rem; color:#1e3b4a; }
+    body.dark-mode .section-header h2 { color:var(--text); }
+    .section-header a { color:var(--accent); text-decoration:none; font-weight:600; }
+    .book-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:1.5rem; margin-bottom:3rem; }
+    .book-card { background:var(--card); border-radius:16px; padding:1rem; box-shadow:var(--shadow); border:1px solid var(--border); cursor:pointer; display:flex; flex-direction:column; transition:0.2s; }
+    .book-card:hover { transform:translateY(-6px); box-shadow:0 12px 30px rgba(0,0,0,0.1); }
+    .cover-placeholder { width:100%; aspect-ratio:2/3; border-radius:10px; background:linear-gradient(135deg,#c4a882,#8b6f55); display:flex; align-items:center; justify-content:center; font-size:3rem; color:white; margin-bottom:0.8rem; }
+    .book-card .book-title { font-weight:700; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .book-card .book-author { font-size:0.8rem; color:var(--text-light); margin-bottom:0.3rem; }
+    .book-card .book-meta { display:flex; justify-content:space-between; font-size:0.75rem; color:#888; margin-top:auto; }
+    .stars { color:#e6a817; }
+    .empty-state { text-align:center; padding:4rem; color:#999; grid-column:1/-1; }
+    .footer { background:#1e3b4a; color:white; text-align:center; padding:2rem; margin-top:3rem; }
+    .footer a { color:#b9906a; }
+    @media(max-width:600px){ .book-grid{grid-template-columns:repeat(2,1fr);} }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="logo"><i class="fas fa-book-open"></i> Ink<span>bound</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="browse.html">Browse</a>
+    <a href="community.html">Community</a>
+    <a href="about.html">About</a>
+    <button class="dark-toggle" onclick="toggleDarkMode()"><i class="fas fa-moon" id="darkIcon"></i></button>
+    <a href="account.html" class="btn btn-primary">Account</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Discover Your Next Great Read</h1>
+  <p>Browse our curated collection of books across every genre</p>
+</div>
+
+<div class="search-container">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search by title or author...">
+    <button onclick="searchBooks()"><i class="fas fa-search"></i> Search</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="categories" id="categoryContainer">
+    <span class="category-pill active" data-category="all">All</span>
+    <span class="category-pill" data-category="fiction">Fiction</span>
+    <span class="category-pill" data-category="education">Education</span>
+    <span class="category-pill" data-category="history">History</span>
+    <span class="category-pill" data-category="science">Science</span>
+    <span class="category-pill" data-category="fantasy">Fantasy</span>
+    <span class="category-pill" data-category="biography">Biography</span>
+  </div>
+
+  <div class="section-header">
+    <h2>Trending & Latest Arrivals</h2>
+    <a href="browse.html">View All →</a>
+  </div>
+
+  <div class="book-grid" id="bookGrid">
+    <div class="empty-state">Loading books...</div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>© 2025 Inkbound — A public bookshelf for readers everywhere</p>
+</div>
+
+<script>
+// ========== PASTE YOUR FIREBASE CONFIG HERE ==========
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+// =====================================================
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let allBooks = [];
+let activeCategory = 'all';
+let searchQuery = '';
+
+let isDark = localStorage.getItem('inkbound_darkmode') === 'true';
+if(isDark){ document.body.classList.add('dark-mode'); document.getElementById('darkIcon').className='fas fa-sun'; }
+function toggleDarkMode(){
+  isDark=!isDark; document.body.classList.toggle('dark-mode',isDark);
+  document.getElementById('darkIcon').className=isDark?'fas fa-sun':'fas fa-moon';
+  localStorage.setItem('inkbound_darkmode',isDark);
+}
+
+async function loadBooks(){
+  const snap = await db.collection('books').orderBy('createdAt','desc').get();
+  allBooks = []; snap.forEach(d => allBooks.push({id:d.id,...d.data()}));
+}
+
+function getFiltered(){
+  let f = [...allBooks];
+  if(activeCategory!=='all') f = f.filter(b=>b.genre===activeCategory);
+  if(searchQuery){
+    const q = searchQuery.toLowerCase();
+    f = f.filter(b=>b.title?.toLowerCase().includes(q)||b.author?.toLowerCase().includes(q));
+  }
+  f.sort((a,b)=>(b.year||0)-(a.year||0));
+  return f;
+}
+
+function renderBooks(){
+  const filtered = getFiltered();
+  const grid = document.getElementById('bookGrid');
+  if(filtered.length===0){
+    grid.innerHTML = `<div class="empty-state"><i class="fas fa-book" style="font-size:3rem;display:block;"></i><h3>No books found</h3><p>${allBooks.length===0?'<a href="admin.html">Upload books</a>':'Try different filters'}</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.slice(0,8).map(b=>`
+    <div class="book-card" onclick="viewBook('${b.id}')">
+      <div class="cover-placeholder"><i class="fas fa-book"></i></div>
+      <div class="book-title">${b.title||'Untitled'}</div>
+      <div class="book-author">by ${b.author||'Unknown'}</div>
+      <div class="book-meta"><span class="stars">${'★'.repeat(Math.floor(b.rating||0))}${'☆'.repeat(5-Math.floor(b.rating||0))}</span><span>${b.pages||'?'}p</span></div>
+    </div>
+  `).join('');
+}
+
+function searchBooks(){ searchQuery = document.getElementById('searchInput').value.trim(); renderBooks(); }
+function viewBook(id){ window.location.href='book-detail.html?id='+id; }
+
+document.getElementById('categoryContainer').addEventListener('click',function(e){
+  if(e.target.classList.contains('category-pill')){
+    document.querySelectorAll('.category-pill').forEach(p=>p.classList.remove('active'));
+    e.target.classList.add('active');
+    activeCategory = e.target.dataset.category;
+    renderBooks();
+  }
+});
+document.getElementById('searchInput').addEventListener('keyup',function(e){ if(e.key==='Enter')searchBooks(); });
+
+(async function init(){
+  try{ await loadBooks(); renderBooks(); }
+  catch(e){ document.getElementById('bookGrid').innerHTML='<div class="empty-state">Error loading. Check Firebase config.</div>'; }
+})();
+</script>
+</body>
+</html>

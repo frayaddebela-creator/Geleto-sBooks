@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inkbound - My Account</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #fdf8f2;
+      --card: #fffbf5;
+      --text: #2e241b;
+      --text-light: #5c4a3a;
+      --text-lighter: #7a6a5c;
+      --accent: #5e3e2c;
+      --accent-hover: #4a2f1f;
+      --gold: #b9906a;
+      --border: #e4d5c3;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+      --error: #c0392b;
+      --success: #27ae60;
+      --font-serif: Georgia, 'Times New Roman', serif;
+      --font-sans: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body.dark-mode {
+      --bg: #1a1a2e;
+      --card: #252540;
+      --text: #e0d6c8;
+      --text-light: #c4b8a8;
+      --text-lighter: #a89880;
+      --accent: #c4956a;
+      --accent-hover: #d4a87a;
+      --gold: #c4956a;
+      --border: #3a3a55;
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: var(--card);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1e3b4a;
+      text-decoration: none;
+    }
+
+    body.dark-mode .logo {
+      color: #c4956a;
+    }
+
+    .logo i {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-weight: 500;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent);
+    }
+
+    .btn {
+      padding: 0.5rem 1.3rem;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-danger {
+      background: var(--error);
+      color: white;
+    }
+
+    .btn-small {
+      padding: 0.35rem 0.9rem;
+      font-size: 0.8rem;
+    }
+
+    .dark-toggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text);
+      padding: 0.4rem;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .dark-toggle:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* TABS */
+    .auth-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-lighter);
+      transition: 0.2s;
+      border-bottom: 3px solid transparent;
+      font-size: 1rem;
+    }
+
+    .auth-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .auth-tab:hover {
+      color: var(--accent);
+    }
+
+    /* PANELS */
+    .panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FORM CARD */
+    .form-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 2.5rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      max-width: 500px;
+      margin: 0 auto;
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .form-card h2 {
+      font-family: var(--font-serif);
+      margin-bottom: 0.3rem;
+      color: var(--accent);
+    }
+
+    .form-card .subtitle {
+      color: var(--text-lighter);
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: var(--bg);
+      color: var(--text);
+      transition: border 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .password-field {
+      position: relative;
+    }
+
+    .password-field .eye-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text-lighter);
+    }
+
+    .error-msg {
+      color: var(--error);
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+      display: none;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    .message-box {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      display: none;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .message-box.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+    }
+
+    .message-box.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .form-footer a {
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* DASHBOARD */
+    .dashboard-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .avatar-large {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #c4a882, #5e3e2c);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .profile-info h2 {
+      font-family: var(--font-serif);
+      margin-bottom: 0.2rem;
+    }
+
+    .profile-info p {
+      color: var(--text-lighter);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 500px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: var(--bg);
+      padding: 1.2rem;
+      border-radius: 14px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .stat-card .stat-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-card .stat-number {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .stat-card .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-lighter);
+    }
+
+    .section-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .section-tab {
+      padding: 0.6rem 1.2rem;
+      border-radius: 25px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-weight: 500;
+      transition: 0.2s;
+      font-size: 0.85rem;
+    }
+
+    .section-tab.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .section-tab:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .list-container {
+      min-height: 200px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .list-item img {
+      width: 45px;
+      height: 65px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .list-item .placeholder-cover {
+      width: 45px;
+      height: 65px;
+      background: #c4a882;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .list-item .item-info {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .list-item .item-info strong {
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .list-item .item-info .meta {
+      font-size: 0.75rem;
+      color: var(--text-lighter);
+    }
+
+    .empty-list {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-lighter);
+    }
+
+    .empty-list i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .logout-section {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #1e3b4a;
+      color: white;
+      padding: 1rem 1.8rem;
+      border-radius: 40px;
+      z-index: 2000;
+      display: none;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR - Always visible, always works -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <i class="fas fa-book-open"></i>
+      Ink<span>bound</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="browse.html"><i class="fas fa-compass"></i> Browse</a>
+      <a href="community.html"><i class="fas fa-users"></i> Community</a>
+      <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+      <button class="dark-toggle" onclick="toggleDarkMode()" title="Dark mode">
+        <i class="fas fa-moon" id="darkIcon"></i>
+      </button>
+      <span id="navAccountBtn">
+        <button class="btn btn-primary" onclick="window.location.href='account.html'">
+          <i class="fas fa-user"></i> Account
+        </button>
+      </span>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- TABS - Only show when not logged in -->
+    <div class="auth-tabs" id="authTabs">
+      <div class="auth-tab active" data-tab="login">🔑 Login</div>
+      <div class="auth-tab" data-tab="signup">✨ Sign Up</div>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="panel active" id="loginPanel">
+      <div class="form-card">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Sign in to your account</p>
+        <div class="message-box" id="loginMessage"></div>
+        <div class="form-group">
+          <label>Email or Username</label>
+          <input type="text" id="loginEmail" placeholder="Enter email or username">
+          <div class="error-msg" id="loginEmailError"></div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-field">
+            <input type="password" id="loginPassword" placeholder="Enter password">
+            <span class="eye-icon" onclick="togglePassword('loginPassword')">👁️</span>
+          </div>
+          <div class="error-msg" id="loginPassError"></div>
+        </div>
+        <button class="btn btn-primary" onclick="handleLogin()" style="width:100%;">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+        <p class="form-footer">
+          Don't have an account? <a onclick="switchTab('signup')">Sign up here</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- SIGNUP PANEL -->
+    <div class="panel" id="signupPanel">
+      <div class="form-card">
+        <h2>Create Account</h2>
+        <p class="subtitle">Join the Inkbound community</p>
+        <div class="message-box" id="signupMessage"></div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="Your full name">
+          <div class="error-msg" id="signupNameError"></div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="signupEmail" placeholder="your@email.com">
+          <div class="error-msg" id="signupEmailError"></div>
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="signupUsername" placeholder="Choose a username">
+          <div class="error-msg" id="signupUserError"></div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-field">
+            <input type="password" id="signupPassword" placeholder="Min. 6 characters">
+            <span class="eye-icon" onclick="togglePassword('signupPassword')">👁️</span>
+          </div>
+          <div class="error-msg" id="signupPassError"></div>
+        </div>
+        <button class="btn btn-primary" onclick="handleSignup()" style="width:100%;">
+          <i class="fas fa-user-plus"></i> Create Account
+        </button>
+        <p class="form-footer">
+          Already have an account? <a onclick="switchTab('login')">Login here</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PANEL -->
+    <div class="panel" id="dashboardPanel">
+      <div class="dashboard-card">
+        <div class="profile-header">
+          <div class="avatar-large" id="dashboardAvatar">?</div>
+          <div class="profile-info">
+            <h2 id="dashboardName">User</h2>
+            <p id="dashboardEmail">user@email.com</p>
+            <p style="font-size:0.85rem; color:var(--text-lighter);" id="dashboardMember">Member since ...</p>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon">❤️</div>
+            <div class="stat-number" id="favCount">0</div>
+            <div class="stat-label">Favorites</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-number" id="wishCount">0</div>
+            <div class="stat-label">Wishlist</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📖</div>
+            <div class="stat-number" id="historyCount">0</div>
+            <div class="stat-label">Books Read</div>
+          </div>
+        </div>
+
+        <div class="section-tabs">
+          <span class="section-tab active" data-section="favorites">❤️ Favorites</span>
+          <span class="section-tab" data-section="wishlist">📋 Wishlist</span>
+          <span class="section-tab" data-section="history">📖 History</span>
+        </div>
+
+        <div class="list-container" id="listContainer">
+          <p style="color:var(--text-lighter);">Loading...</p>
+        </div>
+
+        <div class="logout-section">
+          <button class="btn btn-danger" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============ STATE ============
+    let currentUser = JSON.parse(localStorage.getItem('inkbound_current_user')) || null;
+    let users = JSON.parse(localStorage.getItem('inkbound_users')) || [];
+    let books = JSON.parse(localStorage.getItem('inkbound_books')) || [];
+    let isDarkMode = localStorage.getItem('inkbound_darkmode') === 'true';
+    let activeSection = 'favorites';
+
+    // Dark mode
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+      document.getElementById('darkIcon').className = 'fas fa-sun';
+    }
+
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode', isDarkMode);
+      document.getElementById('darkIcon').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+      localStorage.setItem('inkbound_darkmode', isDarkMode);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    function togglePassword(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.type = field.type === 'password' ? 'text' : 'password';
+    }
+
+    // ============ TAB SWITCHING ============
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.auth-tab[data-tab="${tab}"]`).classList.add('active');
+      
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      if (tab === 'login') {
+        document.getElementById('loginPanel').classList.add('active');
+      } else if (tab === 'signup') {
+        document.getElementById('signupPanel').classList.add('active');
+      }
+    }
+
+    document.getElementById('authTabs').addEventListener('click', function(e) {
+      if (e.target.classList.contains('auth-tab')) {
+        switchTab(e.target.dataset.tab);
+      }
+    });
+
+    // Section tabs in dashboard
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('section-tab')) {
+        document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        activeSection = e.target.dataset.section;
+        renderList();
+      }
+    });
+
+    // ============ AUTH ============
+    function clearErrors() {
+      document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+      document.querySelectorAll('.message-box').forEach(e => { e.className = 'message-box'; e.textContent = ''; });
+    }
+
+    function handleLogin() {
+      clearErrors();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      let valid = true;
+
+      if (!email) {
+        document.getElementById('loginEmailError').textContent = 'Required';
+        document.getElementById('loginEmailError').classList.add('show');
+        valid = false;
+      }
+      if (!password) {
+        document.getElementById('loginPassError').textContent = 'Required';
+        document.getElementById('loginPassError').classList.add('show');
+        valid = false;
+      }
+      if (!valid) return;
+
+      const user = users.find(u => 
+        (u.email.toLowerCase() === email.toLowerCase() || u.username.toLowerCase() === email.toLowerCase()) 
+        && u.password === password
+      );
+
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('inkbound_current_user', JSON.stringify(currentUser));
+        showDashboard();
+        showToast('✅ Welcome, ' + user.name + '!');
+      } else {
+        const msg = document.getElementById('loginMessage');
+        msg.className = 'message-box error';
+        msg.textContent = 'Invalid credentials. Please try again.';
+      }
+    }
+
+    function handleSignup() {
+      clearErrors();
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const username = document.getElementById('signupUsername').value.trim();
+      const password = document.getElementById('signupPassword').value.trim();
+      let valid = true;
+
+      if (!name) {
+        document.getElementById('signupNameError').textContent = 'Required';
+        document.getElementById('signupNameError').classList.add('show');
+        valid = false;
+      }
+      if (!email || !email.includes('@')) {
+        document.getElementById('signupEmailError').textContent = 'Valid email required';
+        document.getElementById('signupEmailError').classList.add('show');
+        valid = false;
+      }
+      if (!username || username.length < 3) {
+        document.getElementById('signupUserError').textContent = '3+ characters required';
+        document.getElementById('signupUserError').classList.add('show');
+        valid = false;
+      }
+      if (!password || password.length < 6) {
+        document.getElementById('signupPassError').textContent = '6+ characters required';
+        document.getElementById('signupPassError').classList.add('show');
+        valid = false;
+      }
+
+      if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+        document.getElementById('signupEmailError').textContent = 'Email already registered';
+        document.getElementById('signupEmailError').classList.add('show');
+        valid = false;
+      }
+      if (users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
+        document.getElementById('signupUserError').textContent = 'Username taken';
+        document.getElementById('signupUserError').classList.add('show');
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      const newUser = {
+        id: Date.now(),
+        name,
+        email,
+        username,
+        password,
+        favorites: [],
+        wishlist: [],
+        history: [],
+        createdAt: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      localStorage.setItem('inkbound_users', JSON.stringify(users));
+      currentUser = newUser;
+      localStorage.setItem('inkbound_current_user', JSON.stringify(currentUser));
+
+      document.getElementById('signupName').value = '';
+      document.getElementById('signupEmail').value = '';
+      document.getElementById('signupUsername').value = '';
+      document.getElementById('signupPassword').value = '';
+
+      showDashboard();
+      showToast('🎉 Account created! Welcome, ' + name + '!');
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('inkbound_current_user');
+      document.getElementById('authTabs').classList.remove('hidden');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('loginPanel').classList.add('active');
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
+      showToast('👋 Logged out');
+    }
+
+    function showDashboard() {
+      document.getElementById('authTabs').classList.add('hidden');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('dashboardPanel').classList.add('active');
+
+      document.getElementById('dashboardAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+      document.getElementById('dashboardName').textContent = currentUser.name;
+      document.getElementById('dashboardEmail').textContent = currentUser.email;
+      document.getElementById('dashboardMember').textContent = 'Member since ' + new Date(currentUser.createdAt).toLocaleDateString();
+
+      updateStats();
+      renderList();
+    }
+
+    function updateStats() {
+      document.getElementById('favCount').textContent = (currentUser.favorites || []).length;
+      document.getElementById('wishCount').textContent = (currentUser.wishlist || []).length;
+      document.getElementById('historyCount').textContent = (currentUser.history || []).length;
+    }
+
+    function renderList() {
+      const container = document.getElementById('listContainer');
+      const ids = currentUser[activeSection] || [];
+      const labels = { favorites: 'favorite books', wishlist: 'wishlisted books', history: 'reading history' };
+      const icons = { favorites: '❤️', wishlist: '📋', history: '📖' };
+
+      if (ids.length === 0) {
+        container.innerHTML = `
+          <div class="empty-list">
+            <i class="fas fa-book-open"></i>
+            <p>No ${labels[activeSection]} yet.</p>
+            <a href="browse.html" style="color:var(--accent); text-decoration:underline;">Browse books →</a>
+          </div>
+        `;
+        return;
+      }
+
+      const items = ids.map(id => books.find(b => b.id === id)).filter(Boolean);
+
+      if (items.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-lighter); text-align:center; padding:2rem;">No matching books found.</p>';
+        return;
+      }
+
+      container.innerHTML = items.map(book => `
+        <div class="list-item">
+          ${book.coverImage 
+            ? `<img src="${book.coverImage}" alt="${book.title}">` 
+            : `<div class="placeholder-cover">📖</div>`
+          }
+          <div class="item-info">
+            <strong>${book.title}</strong>
+            <div class="meta">${book.author} · ${book.genre} · ${book.pages}p</div>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-outline btn-small" onclick="window.location.href='book-detail.html?id=${book.id}'">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn btn-danger btn-small" onclick="removeFromList('${activeSection}', ${book.id})">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeFromList(section, bookId) {
+      currentUser[section] = (currentUser[section] || []).filter(id => id !== bookId);
+      const userIndex = users.findIndex(u => u.id === currentUser.id);
+      if (userIndex > -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('inkbound_users', JSON.stringify(users));
+      }
+      localStorage.setItem('inkbound_current_user', JSON.stringify(currentUser));
+      updateStats();
+      renderList();
+      showToast('Removed from list');
+    }
+
+    // ============ INIT ============
+    if (currentUser) {
+      // Refresh user data
+      const freshUser = users.find(u => u.id === currentUser.id);
+      if (freshUser) {
+        currentUser = freshUser;
+        localStorage.setItem('inkbound_current_user', JSON.stringify(currentUser));
+      }
+      showDashboard();
+    } else {
+      document.getElementById('authTabs').classList.remove('hidden');
+    }
+
+    // Enter key submit
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        if (document.getElementById('loginPanel').classList.contains('active')) {
+          handleLogin();
+        } else if (document.getElementById('signupPanel').classList.contains('active')) {
+          handleSignup();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
