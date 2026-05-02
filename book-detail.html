@@ -3,86 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inkbound - Read Book</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>Inkbound - Read</title>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    :root { --bg:#fdf8f2; --card:#fffbf5; --text:#2e241b; --text-light:#5c4a3a; --accent:#5e3e2c; --border:#e4d5c3; --shadow:0 4px 20px rgba(0,0,0,0.06); --star:#e6a817; }
-    body.dark-mode { --bg:#1a1a2e; --card:#252540; --text:#e0d6c8; --text-light:#c4b8a8; --accent:#c4956a; --border:#3a3a55; }
-    body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; transition:0.3s; }
-    .navbar { background:var(--card); padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
-    .logo { font-family:Georgia,serif; font-size:1.5rem; font-weight:bold; color:#1e3b4a; text-decoration:none; }
-    body.dark-mode .logo { color:#c4956a; }
-    .nav-links { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
-    .nav-links a { text-decoration:none; color:var(--text-light); font-weight:500; font-size:0.9rem; }
-    .nav-links a:hover { color:var(--accent); }
-    .btn { padding:0.5rem 1.2rem; border-radius:25px; border:none; cursor:pointer; font-weight:600; font-size:0.9rem; display:inline-flex; align-items:center; gap:0.4rem; }
-    .btn-primary { background:var(--accent); color:white; }
-    .btn-outline { background:transparent; border:1.5px solid var(--accent); color:var(--accent); }
-    .dark-toggle { background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text); }
-    .container { max-width:850px; margin:0 auto; padding:2rem 1.5rem; }
-    .back-link { display:inline-flex; align-items:center; gap:0.4rem; color:var(--accent); text-decoration:none; font-weight:500; margin-bottom:1.5rem; }
-    .book-detail { display:flex; gap:2rem; flex-wrap:wrap; background:var(--card); border-radius:20px; padding:2rem; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:2rem; }
-    .cover { width:200px; height:300px; border-radius:12px; background:#c4a882; display:flex; align-items:center; justify-content:center; font-size:5rem; flex-shrink:0; overflow:hidden; }
-    .cover img { width:100%; height:100%; object-fit:cover; }
-    .info { flex:1; min-width:250px; }
-    .info h1 { font-family:Georgia,serif; font-size:1.8rem; }
-    .info .author { font-size:1.1rem; color:var(--accent); margin-bottom:1rem; }
-    .meta { display:flex; flex-wrap:wrap; gap:0.8rem; margin-bottom:1rem; }
-    .meta span { background:rgba(94,62,44,0.08); padding:0.3rem 0.8rem; border-radius:20px; font-size:0.85rem; }
-    body.dark-mode .meta span { background:rgba(255,255,255,0.08); }
-    .rating { font-size:1.3rem; color:var(--star); margin-bottom:1rem; }
-    .desc { line-height:1.7; color:var(--text-light); margin-bottom:1.5rem; }
-    .reader-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#323639; z-index:9999; flex-direction:column; }
-    .reader-overlay.active { display:flex; }
-    .reader-toolbar { display:flex; justify-content:space-between; align-items:center; padding:0.8rem 1.5rem; background:#1e1e1e; color:white; }
-    .reader-body { flex:1; overflow:hidden; position:relative; background:#525659; }
-    .reader-body iframe { width:100%; height:100%; border:none; position:absolute; top:0; left:0; }
-    .toast { position:fixed; bottom:30px; right:30px; background:#1e3b4a; color:white; padding:1rem 1.5rem; border-radius:30px; z-index:2000; display:none; }
-    @media(max-width:650px){ .book-detail{flex-direction:column;align-items:center;text-align:center;} .cover{width:160px;height:240px;} }
+    body { font-family:'Segoe UI',sans-serif; background:#fdf8f2; color:#2e241b; }
+    .navbar { background:white; padding:1rem 2rem; border-bottom:1px solid #e4d5c3; }
+    .navbar a { color:#5e3e2c; text-decoration:none; font-weight:bold; font-size:1.3rem; }
+    .container { max-width:800px; margin:2rem auto; padding:0 1.5rem; }
+    .card { background:white; border-radius:16px; padding:2rem; box-shadow:0 4px 20px rgba(0,0,0,0.06); }
+    h1 { font-family:Georgia,serif; color:#5e3e2c; }
+    .btn { padding:0.7rem 1.5rem; border-radius:25px; border:none; cursor:pointer; font-weight:600; background:#5e3e2c; color:white; font-size:1rem; margin-top:1rem; }
+    .reader-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#323639; z-index:9999; }
+    .reader-overlay.active { display:block; }
+    .reader-toolbar { padding:0.8rem 1.5rem; background:#1e1e1e; color:white; display:flex; justify-content:space-between; }
+    .reader-body { height:calc(100% - 50px); }
+    .reader-body iframe { width:100%; height:100%; border:none; }
   </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <a href="index.html" class="logo">📚 Inkbound</a>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="browse.html">Browse</a>
-    <a href="community.html">Community</a>
-    <a href="about.html">About</a>
-    <button class="dark-toggle" onclick="toggleDark()"><i class="fas fa-moon" id="dIcon"></i></button>
-    <a href="account.html" class="btn btn-primary">Account</a>
-  </div>
-</nav>
+<nav class="navbar"><a href="index.html">📚 Inkbound</a></nav>
 
 <div class="container">
-  <a href="browse.html" class="back-link">← Back to Browse</a>
-  <div class="book-detail" id="detail"><p>Loading...</p></div>
+  <div class="card" id="detail"><p>Loading book...</p></div>
 </div>
 
 <div class="reader-overlay" id="reader">
   <div class="reader-toolbar">
-    <h2 id="rTitle" style="font-size:1rem;">Reading...</h2>
-    <div style="display:flex;gap:0.8rem;">
-      <button class="btn btn-outline" onclick="bookmark()" style="color:white;border-color:white;font-size:0.8rem;">📑 Bookmark</button>
-      <button class="btn btn-outline" onclick="closeReader()" style="color:white;border-color:white;font-size:0.8rem;">✕ Close</button>
-    </div>
+    <span id="rTitle">Reading...</span>
+    <button onclick="closeReader()" style="background:white;color:#333;padding:0.3rem 1rem;border-radius:5px;border:none;cursor:pointer;">Close</button>
   </div>
-  <div class="reader-body" id="rBody"><p style="color:white;text-align:center;padding:3rem;">Loading...</p></div>
+  <div class="reader-body" id="rBody"></div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC1dl0DlXBF1baPplTghtHeH3syvhW2FjA",
   authDomain: "books-by-geleto.firebaseapp.com",
@@ -91,9 +47,6 @@ const firebaseConfig = {
   messagingSenderId: "262058617349",
   appId: "1:262058617349:web:7082589ccc25bd83f00a6c"
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
@@ -101,53 +54,29 @@ const params = new URLSearchParams(window.location.search);
 const bookId = params.get('id');
 let book = null;
 
-function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.style.display='block'; setTimeout(()=>el.style.display='none',2500); }
-function stars(r){ const f=Math.floor(r); return '★'.repeat(f)+'☆'.repeat(5-f); }
-
-let isDark = localStorage.getItem('inkbound_darkmode')==='true';
-if(isDark){ document.body.classList.add('dark-mode'); document.getElementById('dIcon').className='fas fa-sun'; }
-function toggleDark(){
-  isDark=!isDark; document.body.classList.toggle('dark-mode',isDark);
-  document.getElementById('dIcon').className=isDark?'fas fa-sun':'fas fa-moon';
-  localStorage.setItem('inkbound_darkmode',isDark);
-}
-
 async function load(){
-  if(!bookId){ document.getElementById('detail').innerHTML='<p>No book selected.</p>'; return; }
-  try{
-    const doc = await db.collection('books').doc(bookId).get();
-    if(!doc.exists){ document.getElementById('detail').innerHTML='<p>Book not found.</p>'; return; }
-    book = {id:doc.id,...doc.data()};
-    document.getElementById('detail').innerHTML = `
-      <div class="cover">${book.coverImage?`<img src="${book.coverImage}" onerror="this.parentElement.innerHTML='📖'">`:'📖'}</div>
-      <div class="info">
-        <h1>${book.title||'Untitled'}</h1>
-        <p class="author">by ${book.author||'Unknown'}</p>
-        <div class="rating">${stars(book.rating||0)} <small>${book.rating||'No ratings'}</small></div>
-        <div class="meta">
-          <span>📄 ${book.pages||'?'}p</span><span>📅 ${book.year||'?'}</span>
-          <span>🌐 ${book.language||'English'}</span><span>🏷️ ${book.genre||'?'}</span>
-          ${book.fileName?`<span>📎 ${book.fileName}</span>`:''}
-        </div>
-        <p class="desc">${book.description||'No description.'}</p>
-        <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="openReader()">📖 Read Online</button>
-          <button class="btn btn-outline" onclick="toast('Added to wishlist!')">❤️ Wishlist</button>
-        </div>
-      </div>`;
-  }catch(e){ document.getElementById('detail').innerHTML='<p>Error loading book.</p>'; }
+  if(!bookId) return;
+  const doc = await db.collection('books').doc(bookId).get();
+  if(!doc.exists){ document.getElementById('detail').innerHTML='<p>Book not found.</p>'; return; }
+  book = {id:doc.id,...doc.data()};
+  document.getElementById('detail').innerHTML = `
+    <h1>${book.title}</h1>
+    <p><strong>${book.author}</strong> · ${book.genre} · ${book.pages}p · ${book.year}</p>
+    <p style="margin:1rem 0;">${book.description||''}</p>
+    ${book.fileName?`<p>📄 ${book.fileName}</p>`:''}
+    <button class="btn" onclick="openReader()">📖 Read Online</button>
+  `;
 }
 
 function openReader(){
-  if(!book||!book.fileURL){ toast('No file available'); return; }
+  if(!book||!book.fileURL) return;
   document.getElementById('reader').classList.add('active');
   document.getElementById('rTitle').textContent = book.title;
   document.getElementById('rBody').innerHTML = `<iframe src="${book.fileURL}"></iframe>`;
 }
 
 function closeReader(){ document.getElementById('reader').classList.remove('active'); }
-function bookmark(){ localStorage.setItem('bm_'+book.id,'1'); toast('📑 Bookmarked!'); }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeReader(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeReader(); });
 
 load();
 </script>
